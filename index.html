@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Vitrine de Projetos</title>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--fg:#26262b;--mute:#6f6f78;--line:#ececf0;--soft:#f5f5f7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:#fff;color:var(--fg);font-family:'Figtree',system-ui,sans-serif;line-height:1.6}
+a{color:inherit}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px;flex-wrap:wrap}
+.logo{font-weight:800;font-size:1.2rem;text-decoration:none}
+nav a{margin-left:20px;text-decoration:none;color:var(--mute);font-weight:600;padding-bottom:3px}
+nav a.on{color:var(--fg);border-bottom:2px solid var(--fg)}
+h1{font-size:clamp(1.8rem,4.5vw,2.6rem);line-height:1.12;margin:.5em 0 .3em;font-weight:800}
+h2{font-size:1.2rem;margin:1.6em 0 .5em}
+p{max-width:64ch}
+.lead{color:var(--mute);font-size:1.1rem}
+.mapbox{position:relative}
+#map{width:100%;height:auto;display:block}
+#map .lab{cursor:pointer}
+#map .lab text{font-family:'Figtree',system-ui,sans-serif;font-weight:700;fill:#111;pointer-events:none}
+#map .dot{cursor:pointer;transition:r .12s}
+#map .dim{opacity:.15}
+#tip{position:absolute;pointer-events:none;background:#fff;border:1px solid var(--line);box-shadow:0 6px 20px rgba(0,0,0,.12);border-radius:10px;padding:10px 12px;font-size:.85rem;max-width:230px;opacity:0;transition:opacity .1s;z-index:5}
+#tip b{display:block;font-size:.95rem}
+#tip span{color:var(--mute)}
+.hint{font-size:.85rem;color:var(--mute);margin:0 0 6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin:16px 0 40px}
+.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px;text-decoration:none;display:flex;flex-direction:column;gap:8px}
+.card:hover{background:var(--soft)}
+.card h3{margin:0;font-size:1.1rem}
+.card p{margin:0;color:var(--mute);font-size:.95rem}
+.tag{display:inline-block;padding:2px 9px;border-radius:4px;font-size:.8rem;font-weight:700;color:#111;width:fit-content}
+.meta{font-size:.85rem;color:var(--mute)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 0;align-items:center}
+.chip{border:0;background:var(--soft);color:var(--fg);padding:6px 13px;border-radius:99px;font:inherit;font-size:.88rem;cursor:pointer}
+.chip.on{background:var(--fg);color:#fff}
+.shot{aspect-ratio:16/8;border-radius:12px;background:var(--soft);display:grid;place-items:center;color:var(--mute);margin:18px 0}
+.btn{display:inline-block;padding:9px 16px;border-radius:8px;background:var(--soft);text-decoration:none;font-weight:600;margin:0 8px 8px 0}
+.btn.p{background:var(--fg);color:#fff}
+ul.steps{padding-left:1.1em;max-width:64ch}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--mute);font-size:.85rem;margin-top:30px}
+:focus-visible{outline:2px solid #4a7bd0;outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="#/">Vitrine de Projetos</a>
+    <nav><a href="#/" data-r="sobre">Sobre</a><a href="#/projetos" data-r="projetos">Projetos</a></nav>
+  </header>
+  <p class="hint">Cada ponto é um projeto e cada cor, um tema. Passe o mouse no ponto para ver o projeto; clique no nome do tema para filtrar.</p>
+  <div class="mapbox"><svg id="map" viewBox="0 0 1000 440" role="img" aria-label="Mapa de projetos por tema"></svg><div id="tip"></div></div>
+  <main id="view"></main>
+  <footer>MVP acadêmico: dados de exemplo, sem back-end ainda.</footer>
+</div>
+
+<script>
+const THEMES={"Web":"#78b4f2","Mobile":"#f27fc4","IA e Dados":"#7bd67a","Jogos":"#a9b1d6","IoT":"#f5a67c","Segurança":"#e3bd4b","Ferramentas":"#5fd0c2"};
+const P=[
+ {id:1,t:"Agenda Acadêmica",th:"Web",a:["Ana Lima","Bruno Reis"],s:"3º sem.",d:"Calendário de provas e entregas que sincroniza com as turmas do curso.",st:["React","Node.js","PostgreSQL"]},
+ {id:2,t:"Biblioteca Livre",th:"Web",a:["Carla Souza"],s:"4º sem.",d:"Catálogo colaborativo de livros técnicos emprestados entre alunos.",st:["Vue","Express","MongoDB"]},
+ {id:3,t:"Portal do Estágio",th:"Web",a:["Diego Melo","Eva Rocha"],s:"5º sem.",d:"Vagas de estágio da região, com filtros por área e tecnologia.",st:["Next.js","Prisma"]},
+ {id:4,t:"Feira da Ilha",th:"Mobile",a:["Fábio Nunes"],s:"4º sem.",d:"App para encontrar produtores locais e ver horários das feiras.",st:["Flutter","Firebase"]},
+ {id:5,t:"Treino Simples",th:"Mobile",a:["Gabi Torres","Hugo Pires"],s:"3º sem.",d:"Registro de treinos com gráficos de evolução semanal.",st:["React Native","SQLite"]},
+ {id:6,t:"Detector de Plágio",th:"IA e Dados",a:["Iara Costa"],s:"6º sem.",d:"Compara trabalhos entregues e destaca trechos parecidos.",st:["Python","scikit-learn"]},
+ {id:7,t:"Previsão de Evasão",th:"IA e Dados",a:["João Vidal","Lia Prado"],s:"7º sem.",d:"Modelo que aponta alunos com risco de abandonar disciplinas.",st:["Python","Pandas","Streamlit"]},
+ {id:8,t:"Chatbot da Secretaria",th:"IA e Dados",a:["Marcos Dias"],s:"6º sem.",d:"Responde dúvidas frequentes de matrícula e documentos.",st:["Python","LLM API"]},
+ {id:9,t:"Labirinto Lógico",th:"Jogos",a:["Nina Alves","Otávio Braga"],s:"3º sem.",d:"Puzzle 2D que ensina lógica de programação em fases.",st:["Godot","GDScript"]},
+ {id:10,t:"Estufa Inteligente",th:"IoT",a:["Paula Cruz"],s:"5º sem.",d:"Sensores de umidade e temperatura com painel em tempo real.",st:["ESP32","MQTT","Grafana"]},
+ {id:11,t:"Cofre de Senhas",th:"Segurança",a:["Rafa Leal"],s:"6º sem.",d:"Gerenciador de senhas com criptografia no lado do cliente.",st:["Rust","WebCrypto"]},
+ {id:12,t:"Gerador de Boilerplate",th:"Ferramentas",a:["Sara Neves","Tiago Motta"],s:"4º sem.",d:"CLI que cria a estrutura inicial de projetos da faculdade.",st:["Go","Cobra"]},
+ {id:13,t:"Clube de Estudos",th:"Web",a:["Vera Lopes"],s:"3º sem.",d:"Grupos de estudo por disciplina com agenda compartilhada.",st:["Svelte","Supabase"]},
+ {id:14,t:"Mapa do Campus",th:"Web",a:["Wesley Gil"],s:"4º sem.",d:"Mapa interativo de salas, laboratórios e bebedouros.",st:["Leaflet","JS"]},
+ {id:15,t:"Caronas UFSC",th:"Mobile",a:["Yara Pinto"],s:"5º sem.",d:"Organiza caronas entre colegas que moram perto.",st:["Kotlin","Firebase"]},
+ {id:16,t:"Lista de Mercado",th:"Mobile",a:["Zeca Faria"],s:"3º sem.",d:"Lista compartilhada em tempo real para repúblicas.",st:["Flutter"]},
+ {id:17,t:"Resumidor de Artigos",th:"IA e Dados",a:["Alice Prado"],s:"7º sem.",d:"Resume artigos científicos em tópicos curtos.",st:["Python","NLP"]},
+ {id:18,t:"Reconhece Folhas",th:"IA e Dados",a:["Beto Luz"],s:"6º sem.",d:"Identifica espécies de plantas por foto.",st:["PyTorch"]},
+ {id:19,t:"Dados Abertos SC",th:"IA e Dados",a:["Cíntia Melo"],s:"5º sem.",d:"Painéis com dados públicos do estado.",st:["SQL","Metabase"]},
+ {id:20,t:"Corrida de Bits",th:"Jogos",a:["Davi Cunha"],s:"4º sem.",d:"Jogo de corrida feito com sprites em pixel art.",st:["Unity","C#"]},
+ {id:21,t:"Dungeon de Algoritmos",th:"Jogos",a:["Elisa Vaz"],s:"5º sem.",d:"RPG em que cada batalha é um problema de algoritmo.",st:["Godot"]},
+ {id:22,t:"Portaria Digital",th:"IoT",a:["Fabrício Sá"],s:"6º sem.",d:"Abre a porta do laboratório com QR code.",st:["Arduino","MQTT"]},
+ {id:23,t:"Consumo de Energia",th:"IoT",a:["Gisele Ramos"],s:"5º sem.",d:"Mede o gasto dos equipamentos do bloco.",st:["ESP32","InfluxDB"]},
+ {id:24,t:"Verificador de Links",th:"Segurança",a:["Heitor Melo"],s:"6º sem.",d:"Avisa se um link recebido parece golpe.",st:["Python","API"]},
+ {id:25,t:"Conversor de Notas",th:"Ferramentas",a:["Isabela Cruz"],s:"3º sem.",d:"Converte planilhas de notas entre formatos.",st:["Python"]}
+];
+const $=s=>document.querySelector(s);
+const tag=t=>`<span class="tag" style="background:${THEMES[t]}">${t}</span>`;
+const counts=()=>{const c={};P.forEach(p=>c[p.th]=(c[p.th]||0)+1);return c};
+
+// gerador pseudoaleatório fixo, para o mapa não mudar a cada visita
+function rng(seed){return()=>{seed=(seed*16807)%2147483647;return(seed-1)/2147483646}}
+
+function drawMap(sel){
+  const W=1000,H=440,c=counts(),names=Object.keys(c),R=rng(11);
+  const fs=n=>12+2.6*c[n], lw=n=>n.length*fs(n)*.6+16;
+  // posiciona o nome de cada tema sem sobrepor os outros
+  const pos={};
+  names.forEach(n=>{
+    for(let k=0;k<3000;k++){
+      const x=150+R()*(W-300),y=60+R()*(H-120);
+      if(names.every(o=>!pos[o]||(((pos[o].x-x)/230)**2+((pos[o].y-y)/115)**2)>1)){pos[n]={x,y};return}
+    }
+    pos[n]={x:W/2,y:H/2};
+  });
+  let out='';
+  names.forEach(n=>{
+    const dim=sel&&sel!==n?' dim':'',col=THEMES[n],{x,y}=pos[n];
+    P.filter(p=>p.th===n).forEach((p,i)=>{
+      const a=i*2.4+R()*.8,rx=lw(n)/2+16+9*Math.sqrt(i+1)+R()*14,ry=fs(n)/2+14+7*Math.sqrt(i+1)+R()*10;
+      const dx=Math.max(8,Math.min(W-8,x+Math.cos(a)*rx)),dy=Math.max(8,Math.min(H-8,y+Math.sin(a)*ry));
+      out+=`<circle class="dot${dim}" data-id="${p.id}" cx="${dx}" cy="${dy}" r="6.5" fill="${col}" stroke="#fff" stroke-width="1.5" tabindex="0" aria-label="${p.t}"/>`;
+    });
+  });
+  names.forEach(n=>{
+    const dim=sel&&sel!==n?' dim':'',{x,y}=pos[n],w=lw(n),h=fs(n)+10;
+    out+=`<g class="lab${dim}" data-th="${n}" tabindex="0" role="button" aria-label="Filtrar ${n}">
+      <rect x="${x-w/2}" y="${y-h/2}" width="${w}" height="${h}" rx="2" fill="${THEMES[n]}"/>
+      <text x="${x}" y="${y+fs(n)*.35}" text-anchor="middle" font-size="${fs(n)}">${n}</text></g>`;
+  });
+  $('#map').innerHTML=out;
+}
+
+const tip=$('#tip');
+function showTip(e){
+  const d=e.target.closest('.dot');
+  if(!d){tip.style.opacity=0;return}
+  const p=P.find(x=>x.id==d.dataset.id),b=$('.mapbox').getBoundingClientRect();
+  tip.innerHTML=`<b>${p.t}</b>${tag(p.th)}<p style="margin:6px 0 4px">${p.d}</p><span>${p.a.join(', ')} · ${p.s}</span>`;
+  let x=e.clientX-b.left+14,y=e.clientY-b.top+14;
+  if(x>b.width-240)x-=260;
+  tip.style.left=x+'px';tip.style.top=y+'px';tip.style.opacity=1;
+}
+$('#map').addEventListener('pointermove',showTip);
+$('#map').addEventListener('pointerleave',()=>tip.style.opacity=0);
+
+const card=p=>`<a class="card" href="#/projeto/${p.id}">${tag(p.th)}<h3>${p.t}</h3><p>${p.d}</p><span class="meta">${p.a.join(', ')} · ${p.s}</span></a>`;
+
+function sobre(){return `
+ <h1>Os projetos do curso, num só lugar.</h1>
+ <p class="lead">Uma vitrine para divulgar o que os alunos de programação estão construindo. Você entra, navega por tema e descobre o que a turma anda fazendo.</p>
+ <h2>Como funciona</h2>
+ <ul class="steps">
+  <li>Grupos submetem o projeto com título, descrição, tecnologias e links.</li>
+  <li>Os projetos aparecem no mapa e na lista, organizados por tema.</li>
+  <li>Sem comentários e sem curtidas: a página do projeto mostra o trabalho e leva ao repositório ou à demonstração.</li>
+ </ul>
+ <h2>Para quem é</h2>
+ <p>Para alunos que querem mostrar seu trabalho, professores que buscam referências e futuros estudantes que querem ver o que se faz no curso.</p>
+ <p style="margin-top:22px"><a class="btn p" href="#/projetos">Ver projetos</a><a class="btn" href="#/" onclick="alert('Protótipo: o formulário de submissão vem na próxima etapa.');return false">Submeter projeto</a></p>`}
+
+let filtro=null;
+function projetos(){
+ const list=P.filter(p=>!filtro||p.th===filtro);
+ return `<h1>Projetos</h1>
+ <div class="bar"><button class="chip ${!filtro?'on':''}" data-f="">Todos (${P.length})</button>
+ ${Object.keys(THEMES).map(t=>`<button class="chip ${filtro===t?'on':''}" data-f="${t}">${t}</button>`).join('')}</div>
+ <div class="grid">${list.map(card).join('')}</div>`}
+
+function detalhe(id){
+ const p=P.find(x=>x.id==id);
+ if(!p)return `<h1>Projeto não encontrado</h1><a class="btn" href="#/projetos">Voltar à lista</a>`;
+ return `<p style="margin-top:20px"><a href="#/projetos" class="meta">Voltar aos projetos</a></p>
+ ${tag(p.th)}<h1>${p.t}</h1><p class="lead">${p.d}</p>
+ <div class="shot">Captura de tela do projeto</div>
+ <h2>Equipe</h2><p>${p.a.join(', ')} (${p.s})</p>
+ <h2>Tecnologias</h2><div class="bar" style="margin-top:0">${p.st.map(s=>`<span class="chip">${s}</span>`).join('')}</div>
+ <h2>Links</h2><p><a class="btn p" href="#/projeto/${p.id}" onclick="return false">Repositório</a><a class="btn" href="#/projeto/${p.id}" onclick="return false">Demonstração</a></p>
+ <h2>Mais em ${p.th}</h2><div class="grid">${P.filter(x=>x.th===p.th&&x.id!==p.id).slice(0,3).map(card).join('')||'<p class="meta">Este é o único projeto do tema por enquanto.</p>'}</div>`}
+
+function route(){
+ const h=location.hash||'#/',m=h.match(/^#\/projeto\/(\d+)/);
+ const r=m?'detalhe':h.startsWith('#/projetos')?'projetos':'sobre';
+ $('#view').innerHTML=r==='detalhe'?detalhe(m[1]):r==='projetos'?projetos():sobre();
+ document.querySelectorAll('nav a').forEach(a=>a.classList.toggle('on',a.dataset.r===(r==='detalhe'?'projetos':r)));
+ drawMap(r==='projetos'?filtro:(r==='detalhe'?P.find(x=>x.id==m[1])?.th:null));
+ tip.style.opacity=0;window.scrollTo(0,0);
+}
+function setFiltro(t){filtro=t||null;if(location.hash!=='#/projetos')location.hash='#/projetos';else route()}
+$('#map').addEventListener('click',e=>{
+  const d=e.target.closest('.dot');if(d){location.hash='#/projeto/'+d.dataset.id;return}
+  const g=e.target.closest('.lab');if(g)setFiltro(filtro===g.dataset.th?null:g.dataset.th)});
+$('#map').addEventListener('keydown',e=>{if(e.key!=='Enter')return;
+  const d=e.target.closest('.dot');if(d)location.hash='#/projeto/'+d.dataset.id;
+  const g=e.target.closest('.lab');if(g)setFiltro(g.dataset.th)});
+$('#view').addEventListener('click',e=>{const c=e.target.closest('[data-f]');if(c)setFiltro(c.dataset.f)});
+window.addEventListener('hashchange',route);route();
+</script>
+</body>
+</html>
